@@ -62,6 +62,7 @@
 <p><code>echoes</code> is an object containing all of the service <code>echo</code></p>
 <pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> {startService} <span class="hljs-keyword">from</span> <span class="hljs-string">'@orion-js/echoes'</span>
 <span class="hljs-keyword">import</span> echoes <span class="hljs-keyword">from</span> <span class="hljs-string">'app/components/echoes'</span>
+<span class="hljs-keyword">import</span> {route} <span class="hljs-keyword">from</span> <span class="hljs-string">'@orion-js/app'</span>
 
 startService({
   <span class="hljs-attr">client</span>: {
@@ -72,12 +73,20 @@ startService({
     <span class="hljs-attr">groupId</span>: <span class="hljs-string">'microserviceId'</span>
   },
   <span class="hljs-attr">producer</span>: {},
+  <span class="hljs-attr">requests</span>: {
+    <span class="hljs-attr">key</span>: <span class="hljs-string">'secretPassword'</span>,
+    <span class="hljs-attr">startHandler</span>: <span class="hljs-function"><span class="hljs-params">handler</span> =&gt;</span> route(<span class="hljs-string">'/echoes-services'</span>, handler),
+    <span class="hljs-attr">services</span>: {
+      <span class="hljs-attr">example</span>: <span class="hljs-string">'http://localhost:4100/echoes-services'</span>
+    }
+  },
   echoes
 })
 </code></pre>
 <h2><a class="anchor" aria-hidden="true" id="echo"></a><a href="#echo" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>echo</code></h2>
-<p>An <code>echo</code> is a message handler. You can define multiple echoes in your app. All must be passed in the <code>echoes</code> param of <code>startService</code>. The key in the <code>echoes</code> params will be the name of the <code>topic</code>.</p>
-<p>You must pass a resolve function, which has 2 arguments.</p>
+<p>An <code>echo</code> is a message handler. You can define multiple echoes in your app. All must be passed in the <code>echoes</code> param of <code>startService</code>. The key in the <code>echoes</code> params will be the name of the <code>topic</code>. An <code>echo</code> definition must have 2 params. <code>type</code> and <code>resolve</code>:</p>
+<p>Type can be <code>echo.types.event</code> or <code>echo.types.request</code>.</p>
+<p>You must pass a <code>resolve</code> function, which has 2 arguments.</p>
 <ul>
 <li><code>params</code>: The params passed when this event is called</li>
 <li><code>context</code>: Contains the arguments in the <a href="https://kafka.js.org/docs/consuming#a-name-each-message-a-eachmessage"><code>eachMessage</code> Kafkajs function</a></li>
@@ -85,6 +94,7 @@ startService({
 <pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> {echo} <span class="hljs-keyword">from</span> <span class="hljs-string">'@orion-js/echoes'</span>
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> echo({
+  <span class="hljs-attr">type</span>: echo.types.event,
   <span class="hljs-keyword">async</span> resolve(params, context) {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Received an event'</span>, params)
   }
@@ -111,7 +121,28 @@ startService({
   }
 })
 </code></pre>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/autoform"><span class="arrow-prev">← </span><span>Autoform</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#startservice"><code>startService</code></a></li><li><a href="#echo"><code>echo</code></a></li><li><a href="#publish"><code>publish</code></a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/logo-white.svg" alt="Orionjs" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/en/installation.html">Getting Started</a><a href="/docs/en/basics.html">Learn the basics</a><a href="/docs/en/schema.html">API Reference</a></div><div><h5>Support</h5><a href="http://stackoverflow.com/questions/tagged/orionjs" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://github.com/orionjs/orionjs/issues" target="_blank" rel="noreferrer noopener">Github issues</a></div><div><h5>More</h5><a href="/blog">Blog</a><a href="https://github.com/orionjs/orionjs" target="_blank" rel="noopener noreferrer">GitHub</a><a class="github-button" href="https://github.com/orionjs/orionjs" data-icon="octicon-star" data-count-href="/orionjs/orionjs/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2021 Orionjs Team</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+<h2><a class="anchor" aria-hidden="true" id="request"></a><a href="#request" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>request</code></h2>
+<p>Publish sends a http request that expects an instant response. It expects the following params:</p>
+<ul>
+<li><code>method</code>: Topic (<code>echo</code>) to send the message to</li>
+<li><code>service</code>: Service name that has an url mapped on the startService function.</li>
+<li><code>params</code>: The params that the <code>echo</code> will receive. This params are serialized using <a href="https://github.com/yahoo/serialize-javascript"><code>serialize-javascript</code></a> so you can pass all JavaScript basic types (not including functions).</li>
+</ul>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> {request} <span class="hljs-keyword">from</span> <span class="hljs-string">'@orion-js/echoes'</span>
+
+<span class="hljs-keyword">await</span> request({
+  <span class="hljs-attr">service</span>: <span class="hljs-string">'example'</span>,
+  <span class="hljs-attr">method</span>: <span class="hljs-string">'getResponse'</span>,
+  <span class="hljs-attr">params</span>: {
+    <span class="hljs-attr">hello</span>: <span class="hljs-string">'world'</span>,
+    <span class="hljs-attr">date</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(),
+    <span class="hljs-attr">number</span>: <span class="hljs-number">134433</span>,
+    <span class="hljs-attr">bool</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">regexp</span>: <span class="hljs-regexp">/alsothis/gi</span>
+  }
+})
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/autoform"><span class="arrow-prev">← </span><span>Autoform</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#startservice"><code>startService</code></a></li><li><a href="#echo"><code>echo</code></a></li><li><a href="#publish"><code>publish</code></a></li><li><a href="#request"><code>request</code></a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/logo-white.svg" alt="Orionjs" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/en/installation.html">Getting Started</a><a href="/docs/en/basics.html">Learn the basics</a><a href="/docs/en/schema.html">API Reference</a></div><div><h5>Support</h5><a href="http://stackoverflow.com/questions/tagged/orionjs" target="_blank" rel="noreferrer noopener">Stack Overflow</a><a href="https://github.com/orionjs/orionjs/issues" target="_blank" rel="noreferrer noopener">Github issues</a></div><div><h5>More</h5><a href="/blog">Blog</a><a href="https://github.com/orionjs/orionjs" target="_blank" rel="noopener noreferrer">GitHub</a><a class="github-button" href="https://github.com/orionjs/orionjs" data-icon="octicon-star" data-count-href="/orionjs/orionjs/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2021 Orionjs Team</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
